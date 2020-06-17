@@ -8,7 +8,7 @@ using System.Linq;
 namespace ITPI.MAP.DataExtractManager
 {
 	/// <summary>
-	/// Class responsbile to extract and load Section Term data.
+	/// Class responsible to extract and load Section Term data.
 	/// </summary>
 	public class OrchestrationManager : IOrchestrationManager
 	{
@@ -94,7 +94,7 @@ namespace ITPI.MAP.DataExtractManager
 			{
 				if (file != null)
 				{
-					String fileContents = File.ReadAllText(file.FullName);
+					string fileContents = File.ReadAllText(file.FullName);
 					sectionsExtract = JsonConvert.DeserializeObject<List<SectionsExtract>>(fileContents);
 					log.Info($"The file {file.Name} will be loaded.");
 				}

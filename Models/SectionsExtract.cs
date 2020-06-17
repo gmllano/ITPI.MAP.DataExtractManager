@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace ITPI.MAP.DataExtractManager
 {
 	/// <summary>
-	/// Class responsbile to store Sections Extract data
+	/// Class responsible to store Sections Extract data/
 	/// </summary>
 		public class SectionsExtract
 		{
@@ -115,6 +115,6 @@ namespace ITPI.MAP.DataExtractManager
 			public double? CombinedSectionId { get; set; }
 
 			[JsonProperty("jsonmeetings")]
-			public JsonMeetings[] jsonmeetings { get; set; }
+			public JsonMeetings[] JsonMeetings { get; set; }
 		}
 }

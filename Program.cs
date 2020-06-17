@@ -4,12 +4,12 @@ using log4net;
 
 namespace ITPI.MAP.DataExtractManager
 {
-	class Program
+	public class Program
 	{
 		private static readonly ILog log = 
 			LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-		static void Main(string[] args)
+		public static void Main(string[] args)
 		{
 			IDataExtractManager dataExtractManager = null;
 			IOrchestrationManager orchestrationManager = null;
@@ -31,7 +31,7 @@ namespace ITPI.MAP.DataExtractManager
 
 				dataExtractManager = new DataExtractManager(connectionStr, log);
 
-				orchestrationManager = new OrchestrationManager(sourcePath, dataExtractManager, log) ;
+				orchestrationManager = new OrchestrationManager(sourcePath, dataExtractManager, log);
 
 				Run(orchestrationManager, log);
 			}
@@ -45,7 +45,7 @@ namespace ITPI.MAP.DataExtractManager
 		/// Gather the files to deserialize and load into the database.
 		/// </summary>
 		/// <param name="orchestration">The orchestration object.</param>
-		static void Run(IOrchestrationManager orchestration, ILog log)
+		private static void Run(IOrchestrationManager orchestration, ILog log)
 		{
 			try
 			{

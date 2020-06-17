@@ -2,25 +2,28 @@
 using log4net;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Data;
-using System.Text;
+using System.Data.SqlClient;
 using System.Linq;
-
+using System.Text;
 
 namespace ITPI.MAP.DataExtractManager
 {
 	/// <summary>
-	/// Class responsible to communicate with the sql server database.
+	/// Class responsible to communicate with the database server.
 	/// </summary>
 	public class DataExtractManager : IDataExtractManager
 	{
 		#region variables
 
 		/// <summary>
-		/// The sql server connection object.
+		/// The database server connection object.
 		/// </summary>
 		private readonly string connectionStr = string.Empty;
+
+		/// <summary>
+		/// The logger.
+		/// </summary>
 		private readonly ILog log = null;
 
 		#endregion
@@ -30,7 +33,8 @@ namespace ITPI.MAP.DataExtractManager
 		/// <summary>
 		/// The constructor for the data extract manager.
 		/// </summary>
-		/// <param name="Connection"></param>
+		/// <param name="connectionStr">The connection string.</param>
+		/// <param name="log">The log file.</param>
 		public DataExtractManager(string connectionStr, ILog log)
 		{
 			this.connectionStr = connectionStr;
@@ -70,17 +74,18 @@ namespace ITPI.MAP.DataExtractManager
 		/// <summary>
 		/// Insert course data into the Sections Extract table.
 		/// </summary>
-		/// <param name="SectionsExtractData">A list of courses.</param>
-		/// <returns></returns>
-		public bool InsertSectionsExtract(SectionsExtract SectionsExtractData, ref int courseCnt)
+		/// <param name="sectionsExtractData">A list of courses.</param>
+		/// <param name="courseCnt">The course count.</param>
+		/// <returns>A value indicating whether it succeeded.</returns>
+		public bool InsertSectionsExtract(SectionsExtract sectionsExtractData, ref int courseCnt)
 		{
 			bool result = false;
 			
-			if (SectionsExtractData != null)
+			if (sectionsExtractData != null)
 			{
 				try
 				{
-					var sectionExtCourses = this.LoadSectionExtract(SectionsExtractData);  // Prepare data table.
+					var sectionExtCourses = this.LoadSectionExtract(sectionsExtractData);  // Prepare data table.
 					courseCnt += sectionExtCourses.Rows.Count;
 					var connection = new SqlConnection(this.connectionStr);
 
@@ -112,44 +117,45 @@ namespace ITPI.MAP.DataExtractManager
 		/// <summary>
 		/// Prepare and load section extract data.
 		/// </summary>
-		/// <param name="SectionsExtractData">The Section extract object.</param>
+		/// <param name="sectionsExtractData">The Section extract object.</param>
 		/// <returns>Returns a data table with courses.</returns>
-		private DataTable LoadSectionExtract(SectionsExtract SectionsExtractData)
+		private DataTable LoadSectionExtract(SectionsExtract sectionsExtractData)
 		{
 			var extractData = this.PrepareSectionExtractTbl();
 
-			foreach (var meeting in SectionsExtractData.jsonmeetings)
+			foreach (var meeting in sectionsExtractData.JsonMeetings)
 			{
-				foreach (var assign in meeting.jsonassignments)
+				foreach (var assign in meeting.JsonAssignments)
 				{
 					var row = extractData.NewRow();
+
 					//todo: need to format create date here.
-					row["DateCreated"] = (object)this.UnixTimeStampToDateTime(SectionsExtractData.DateCreated, true) ?? DBNull.Value;
-					row["TermID"] = (object)SectionsExtractData.TermID ?? DBNull.Value;
-					row["SectionStatus"] = SectionsExtractData.SectionStatus;
-					row["CourseVersionID"] = (object)SectionsExtractData.CourseVersionId ?? DBNull.Value;
-					row["CourseDiscipline"] = SectionsExtractData.CourseDiscipline;
-					row["CourseNumber"] = SectionsExtractData.CourseNumber;
-					row["SectionUnits"] = (object)SectionsExtractData.SectionUnits ?? DBNull.Value;
-					row["CourseTitle"] = SectionsExtractData.CourseTitle;
-					row["SectionNumber"] = SectionsExtractData.SectionNumber;
-					row["CombinedSectionID"] = (object)SectionsExtractData.CombinedSectionId ?? DBNull.Value;
-					row["MethodOfInstruction"] = SectionsExtractData.MethodOfInstruction;
-					row["BasicSkillsFlag"] = SectionsExtractData.BasicSkills;
-					row["DayEvening"] = SectionsExtractData.DayEvening;
-					row["Responsibility"] = (object)SectionsExtractData.AccountClassResponsibility ?? DBNull.Value;
-					row["AcctClassLocation"] = SectionsExtractData.AccountClassLocation;
-					row["ClassWeeks"] = (object)SectionsExtractData.ClassWeeks ?? DBNull.Value;
-					row["DateClassBegin"] = this.UnixTimeStampToDateTime(SectionsExtractData.DateClassBegin);
-					row["DateClassCensus"] = this.UnixTimeStampToDateTime(SectionsExtractData.DateFirstCensus);
-					row["DateClassEnd"] = this.UnixTimeStampToDateTime(SectionsExtractData.DateClassEnd);
-					row["ClassSizeMax"] = (object)SectionsExtractData.ClassSizeMax ?? DBNull.Value;
-					row["CurrentEnrollment"] = (object)SectionsExtractData.CurrentEnrollment ?? DBNull.Value;
-					row["WaitList"] = (object)SectionsExtractData.WaitList ?? DBNull.Value;
-					row["CensusEnrollment"] = (object)SectionsExtractData.CensusEnrollment ?? DBNull.Value;
-					row["TotalHoursAttendance"] = (object)SectionsExtractData.TotalHoursAttendance ?? DBNull.Value;
-					row["TBAHours"] = (object)SectionsExtractData.HoursTba ?? DBNull.Value;
-					row["OnlineComponent"] = SectionsExtractData.OnlineComponent;
+					row["DateCreated"] = (object)this.UnixTimeStampToDateTime(sectionsExtractData.DateCreated, true) ?? DBNull.Value;
+					row["TermID"] = (object)sectionsExtractData.TermID ?? DBNull.Value;
+					row["SectionStatus"] = sectionsExtractData.SectionStatus;
+					row["CourseVersionID"] = (object)sectionsExtractData.CourseVersionId ?? DBNull.Value;
+					row["CourseDiscipline"] = sectionsExtractData.CourseDiscipline;
+					row["CourseNumber"] = sectionsExtractData.CourseNumber;
+					row["SectionUnits"] = (object)sectionsExtractData.SectionUnits ?? DBNull.Value;
+					row["CourseTitle"] = sectionsExtractData.CourseTitle;
+					row["SectionNumber"] = sectionsExtractData.SectionNumber;
+					row["CombinedSectionID"] = (object)sectionsExtractData.CombinedSectionId ?? DBNull.Value;
+					row["MethodOfInstruction"] = sectionsExtractData.MethodOfInstruction;
+					row["BasicSkillsFlag"] = sectionsExtractData.BasicSkills;
+					row["DayEvening"] = sectionsExtractData.DayEvening;
+					row["Responsibility"] = (object)sectionsExtractData.AccountClassResponsibility ?? DBNull.Value;
+					row["AcctClassLocation"] = sectionsExtractData.AccountClassLocation;
+					row["ClassWeeks"] = (object)sectionsExtractData.ClassWeeks ?? DBNull.Value;
+					row["DateClassBegin"] = this.UnixTimeStampToDateTime(sectionsExtractData.DateClassBegin);
+					row["DateClassCensus"] = this.UnixTimeStampToDateTime(sectionsExtractData.DateFirstCensus);
+					row["DateClassEnd"] = this.UnixTimeStampToDateTime(sectionsExtractData.DateClassEnd);
+					row["ClassSizeMax"] = (object)sectionsExtractData.ClassSizeMax ?? DBNull.Value;
+					row["CurrentEnrollment"] = (object)sectionsExtractData.CurrentEnrollment ?? DBNull.Value;
+					row["WaitList"] = (object)sectionsExtractData.WaitList ?? DBNull.Value;
+					row["CensusEnrollment"] = (object)sectionsExtractData.CensusEnrollment ?? DBNull.Value;
+					row["TotalHoursAttendance"] = (object)sectionsExtractData.TotalHoursAttendance ?? DBNull.Value;
+					row["TBAHours"] = (object)sectionsExtractData.HoursTba ?? DBNull.Value;
+					row["OnlineComponent"] = sectionsExtractData.OnlineComponent;
 					row["Instructor"] = assign.InstructorName;
 					row["ClassComponent"] = assign.ClassComponent;
 					row["FTEFContractual"] = (object)assign.FtefContractual?? DBNull.Value;
@@ -167,15 +173,15 @@ namespace ITPI.MAP.DataExtractManager
 					row["EndTime"] = this.UnixTimeToReadableTime(meeting.EndTime);
 					row["TotalApportionmentHours"] = (object)meeting.TotalApportionmentHours ?? DBNull.Value;
 					row["MeetingID"] = (object)meeting.MeetingId ?? DBNull.Value;
-					row["ContactIncrement"] = (object)SectionsExtractData.ContactIncrement ?? DBNull.Value;
-					row["FTESPerEnrollment"] = SectionsExtractData.FtesPerEnrollment;
+					row["ContactIncrement"] = (object)sectionsExtractData.ContactIncrement ?? DBNull.Value;
+					row["FTESPerEnrollment"] = sectionsExtractData.FtesPerEnrollment;
 					row["MeetingMethodofInstruction"] = meeting.MethodOfInstruction;
-					row["ClassSizeMaxAdj"] = (object)SectionsExtractData.ClassSizeMaxAdj ?? DBNull.Value;
-					row["HoursContactTotal"] = SectionsExtractData.HoursContactTotal;
-					row["HoursLectureSchedTotal"] = SectionsExtractData.HoursLectureScheduledTotal;
-					row["HoursLabScheTotal"] = SectionsExtractData.HoursLabScheduledTotal;
-					row["SAMCode"] = (object)SectionsExtractData.SamCode ?? DBNull.Value;
-					row["LabTier"] = (object)SectionsExtractData.LabTier ?? DBNull.Value;
+					row["ClassSizeMaxAdj"] = (object)sectionsExtractData.ClassSizeMaxAdj ?? DBNull.Value;
+					row["HoursContactTotal"] = sectionsExtractData.HoursContactTotal;
+					row["HoursLectureSchedTotal"] = sectionsExtractData.HoursLectureScheduledTotal;
+					row["HoursLabScheTotal"] = sectionsExtractData.HoursLabScheduledTotal;
+					row["SAMCode"] = (object)sectionsExtractData.SamCode ?? DBNull.Value;
+					row["LabTier"] = (object)sectionsExtractData.LabTier ?? DBNull.Value;
 					row["RoomCapacity"] = (object)meeting.RoomCapacity ?? DBNull.Value;
 
 					extractData.Rows.Add(row);
@@ -255,13 +261,16 @@ namespace ITPI.MAP.DataExtractManager
 		/// Returns a readable date time stamp.
 		/// </summary>
 		/// <param name="unixTimeStamp">Unix date time stamp.</param>
+		/// <param name="isCreateDate">Whether the field is the create date field.</param>
 		/// <returns>A value indicating a date time stamp.</returns>
 		private string UnixTimeStampToDateTime(string unixTimeStamp, bool isCreateDate = false)
 		{
 			try
 			{
 				if (string.IsNullOrEmpty(unixTimeStamp))
+				{
 					return string.Empty;
+				}
 
 				var result = CleanDate(unixTimeStamp);
 
@@ -278,7 +287,6 @@ namespace ITPI.MAP.DataExtractManager
 					{
 						return date.ToString("MMddyyyy");
 					}
-					
 				}
 				else
 				{
@@ -304,7 +312,9 @@ namespace ITPI.MAP.DataExtractManager
 				string timeVal = string.Empty;
 
 				if (string.IsNullOrEmpty(unixTimeOnly))
+				{
 					return timeVal;
+				}
 
 				var result = CleanDate(unixTimeOnly);
 
@@ -313,7 +323,9 @@ namespace ITPI.MAP.DataExtractManager
 				var timeOfDay = dateTimeOffset.ToLocalTime().ToString().Split(' ');
 
 				if (timeOfDay?.Length <= 0)
+				{
 					return string.Empty;
+				}
 
 				var timeOnly = timeOfDay[1].Substring(0, 5).TrimEnd(':');
 				var midDayOffset = timeOfDay[2].ToString();
@@ -337,8 +349,8 @@ namespace ITPI.MAP.DataExtractManager
 			long epochValue;
 			StringBuilder epochDate = new StringBuilder(epochDt);
 			
-			epochDate.Replace("/Date(", "");
-			epochDate.Replace(")/", "");
+			epochDate.Replace("/Date(", string.Empty);
+			epochDate.Replace(")/", string.Empty);
 
 			var result = long.TryParse(epochDate.ToString(), out epochValue);
 

@@ -55,6 +55,6 @@ namespace ITPI.MAP.DataExtractManager
 		public double? RoomCapacity { get; set; }
 
 		[JsonProperty("jsonassignments")]
-		public JsonAssignments[] jsonassignments { get; set; }
+		public JsonAssignments[] JsonAssignments { get; set; }
 	}
 }

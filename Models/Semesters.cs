@@ -7,21 +7,23 @@ using System.Threading.Tasks;
 namespace ITPI.MAP.DataExtractManager
 {
 	/// <summary>
-	/// Class responsbile to contain semester information.
+	/// Class responsible to contain semester information.
 	/// </summary>
 	public class Semesters
 	{
 		public string Semester { get; set; }
+		
 		public string SemesterName { get; set; }
+		
 		public DateTime BeginningDate { get; set; }
 
 		public DateTime EndingDate { get; set; }
 
 		public string Status { get; set; }
 
-		public Int16 SpreadsheetLoaded { get; set; }
+		public short SpreadsheetLoaded { get; set; }
 
-		public Int16 TargetsLoaded { get; set; }
+		public short TargetsLoaded { get; set; }
 
 		public DateTime LastAdded { get; set; }
 
@@ -33,6 +35,6 @@ namespace ITPI.MAP.DataExtractManager
 
 		public string CatalogYear { get; set; }
 
-		public Double GlobalAdj { get; set; }
+		public double GlobalAdj { get; set; }
 	}
 }

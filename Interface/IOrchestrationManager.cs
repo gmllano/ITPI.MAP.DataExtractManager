@@ -4,15 +4,13 @@ using System.IO;
 namespace ITPI.MAP.DataExtractManager
 {
 	/// <summary>
-	/// Interface responsible loading files from file directory and inserting data into sql server.
+	/// Interface responsible loading files from file directory and inserting data into database server.
 	/// </summary>
 	public interface IOrchestrationManager
 	{
-
 		/// <summary>
 		/// Get a list of files from the extract directory folder.
 		/// </summary>
-		/// <param name="directoryPath">The directory path where files are located.</param>
 		/// <returns>A list of files.</returns>
 		List<FileInfo> GetFiles();
 
@@ -22,7 +20,6 @@ namespace ITPI.MAP.DataExtractManager
 		/// <param name="file">The semester file.</param>
 		/// <returns>Return a list of sections extract objects.</returns>
 		List<SectionsExtract> MapFile(FileInfo file);
-		
 
 		/// <summary>
 		/// Insert the course information.
