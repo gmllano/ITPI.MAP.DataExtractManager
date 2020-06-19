@@ -82,7 +82,7 @@ namespace ITPI.MAP.DataExtractManager
 								}
 							}
 
-							orchestration.Log.Info($"THe file {file.Name} completed. Number of records loaded {courseCnt}");
+							orchestration.Log.Info($"The file {file.Name} completed. Number of records loaded {courseCnt}");
 						}
 					}
 
