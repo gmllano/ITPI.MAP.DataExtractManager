@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using log4net;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ITPI.MAP.DataExtractManager

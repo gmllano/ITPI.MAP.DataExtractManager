@@ -9,6 +9,11 @@ namespace ITPI.MAP.DataExtractManager
 	public interface IOrchestrationManager
 	{
 		/// <summary>
+		/// The logger.
+		/// </summary>
+		ILogger Log { get; set; }
+
+		/// <summary>
 		/// Get a list of files from the extract directory folder.
 		/// </summary>
 		/// <returns>A list of files.</returns>

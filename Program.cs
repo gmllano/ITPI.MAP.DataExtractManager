@@ -1,19 +1,18 @@
-﻿using System;
+﻿using Autofac;
+using Autofac.Core;
+using System;
 using System.Configuration;
-using log4net;
 
 namespace ITPI.MAP.DataExtractManager
 {
 	public class Program
 	{
-		private static readonly ILog log = 
-			LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+		private static IContainer Container { get; set; }
 
 		public static void Main(string[] args)
 		{
-			IDataExtractManager dataExtractManager = null;
-			IOrchestrationManager orchestrationManager = null;
-			
+			var builder = new ContainerBuilder();
+
 			try
 			{
 				string sourcePath = ConfigurationManager.AppSettings["SourcePath"];
@@ -29,29 +28,37 @@ namespace ITPI.MAP.DataExtractManager
 					throw new ApplicationException("Connection string is missing from configuration.");
 				}
 
-				dataExtractManager = new DataExtractManager(connectionStr, log);
+				builder.RegisterType<Logger>().As<ILogger>();
+				builder.RegisterType<DataExtractManager>().As<IDataExtractManager>()
+				.WithParameter(new ResolvedParameter(
+							   (pi, ctx) => pi.ParameterType == typeof(string) && pi.Name == "connectionStr",
+							   (pi, ctx) => connectionStr));
+				builder.RegisterType<OrchestrationManager>().As<IOrchestrationManager>()
+					.WithParameter(new ResolvedParameter(
+							   (pi, ctx) => pi.ParameterType == typeof(string) && pi.Name == "sourcePath",
+							   (pi, ctx) => sourcePath));
+				Container = builder.Build();
 
-				orchestrationManager = new OrchestrationManager(sourcePath, dataExtractManager, log);
-
-				Run(orchestrationManager, log);
+				Run();
 			}
 			catch (Exception exp)
 			{
-				log.Error(exp.InnerException.Message);
+				throw exp;
 			}
 		}
 
 		/// <summary>
-		/// Gather the files to deserialize and load into the database.
+		/// Gather the files from the source location to be deserialize and loaded into the database.
 		/// </summary>
-		/// <param name="orchestration">The orchestration object.</param>
-		private static void Run(IOrchestrationManager orchestration, ILog log)
+		private static void Run()
 		{
-			try
+			using (var scope = Container)
 			{
-				if (orchestration != null)
+				var orchestration = scope.Resolve<IOrchestrationManager>();
+
+				try
 				{
-					log.Info("BEGIN - Extract and load all files from folder.");
+					orchestration.Log.Info("BEGIN - Extract and load all files from folder.");
 
 					var files = orchestration.GetFiles();
 
@@ -60,7 +67,7 @@ namespace ITPI.MAP.DataExtractManager
 						int courseCnt = 0;
 
 						var sectionsExtract = orchestration.MapFile(file);
-						
+
 						if (sectionsExtract != null)
 						{
 							foreach (var extract in sectionsExtract)
@@ -69,22 +76,23 @@ namespace ITPI.MAP.DataExtractManager
 
 								if (result == false)
 								{
-									log.Warn($"course failed to insert. " +
-										$"term {extract.TermID} course number {extract.CourseNumber}" +
+									orchestration.Log.Warn($"course failed to insert. " +
+										$"term {extract.TermID}, course number {extract.CourseNumber}, " +
 										$"course title {extract.CourseTitle}");
 								}
 							}
 
-							log.Info($"THe file {file.Name} completed. Number of records loaded {courseCnt}");
+							orchestration.Log.Info($"THe file {file.Name} completed. Number of records loaded {courseCnt}");
 						}
 					}
 
-					log.Info("DONE - Extract and load has completed.");
+					orchestration.Log.Info("DONE - Extract and load has completed.");
 				}
-			}
-			catch (Exception exp)
-			{
-				log.Error(exp.InnerException.Message);
+
+				catch (Exception exp)
+				{
+					orchestration.Log.Error($"Exception {exp.Message}");
+				}
 			}
 		}
 	}

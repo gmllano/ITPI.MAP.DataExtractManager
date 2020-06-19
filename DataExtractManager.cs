@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using log4net;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -24,7 +23,7 @@ namespace ITPI.MAP.DataExtractManager
 		/// <summary>
 		/// The logger.
 		/// </summary>
-		private readonly ILog log = null;
+		private readonly ILogger log = null;
 
 		#endregion
 
@@ -35,7 +34,7 @@ namespace ITPI.MAP.DataExtractManager
 		/// </summary>
 		/// <param name="connectionStr">The connection string.</param>
 		/// <param name="log">The log file.</param>
-		public DataExtractManager(string connectionStr, ILog log)
+		public DataExtractManager(string connectionStr, ILogger log)
 		{
 			this.connectionStr = connectionStr;
 			this.log = log;
@@ -52,6 +51,11 @@ namespace ITPI.MAP.DataExtractManager
 		public List<Semesters> GetSemesters()
 		{
 			IEnumerable<Semesters> semesters;
+
+			if (string.IsNullOrEmpty(this.connectionStr))
+			{
+				throw new ApplicationException("Connection string is empty or missing.");
+			}
 
 			try
 			{
@@ -80,7 +84,12 @@ namespace ITPI.MAP.DataExtractManager
 		public bool InsertSectionsExtract(SectionsExtract sectionsExtractData, ref int courseCnt)
 		{
 			bool result = false;
-			
+
+			if (string.IsNullOrEmpty(this.connectionStr))
+			{
+				throw new ApplicationException("Connection string is empty or missing.");
+			}
+
 			if (sectionsExtractData != null)
 			{
 				try
@@ -105,6 +114,10 @@ namespace ITPI.MAP.DataExtractManager
 				{
 					log.Error($"Failed to insert course into database. {exp.Message}");
 				}
+			}
+			else
+			{
+				throw new ApplicationException("No section extract data to load.");
 			}
 
 			return result;

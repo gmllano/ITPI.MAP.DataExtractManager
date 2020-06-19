@@ -1,5 +1,4 @@
-﻿using log4net;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,18 +15,28 @@ namespace ITPI.MAP.DataExtractManager
 		
 		private readonly string sourcePath = string.Empty;
 		private readonly IDataExtractManager dataExtractManager;
-		private readonly ILog log = null;
 
 		#endregion
 
 		#region constructor
 
-		public OrchestrationManager(string sourcePath, IDataExtractManager dataExtractManager, ILog log)
+		/// <summary>
+		/// The contructor for the Orchestration Manager.
+		/// </summary>
+		/// <param name="sourcePath">The source path of the files.</param>
+		/// <param name="dataExtractManager">The database extract manager.</param>
+		/// <param name="log">The log.</param>
+		public OrchestrationManager(string sourcePath, IDataExtractManager dataExtractManager, ILogger log)
 		{
 			this.sourcePath = sourcePath;
 			this.dataExtractManager = dataExtractManager;
-			this.log = log;
+			this.Log = log;
 		}
+
+		#endregion
+
+		#region public properties
+		public ILogger Log { get; set; }
 
 		#endregion
 
@@ -54,11 +63,11 @@ namespace ITPI.MAP.DataExtractManager
 				}
 
 				// Get active semesters.
-				log.Info("Get semesters from database.");
+				Log.Info("Get semesters from database.");
 				var semesters = this.dataExtractManager.GetSemesters();
 
 				// Get directory files.
-				log.Info($"Get files from folder {this.sourcePath}");
+				Log.Info($"Get files from folder {this.sourcePath}");
 				var dirFiles = Directory.GetFiles(this.sourcePath);
 
 				// Order the files in descending order by semester.
@@ -75,7 +84,7 @@ namespace ITPI.MAP.DataExtractManager
 			}
 			catch (Exception exp)
 			{
-				log.Error(exp.Message);	
+				Log.Error(exp.Message);	
 			}
 
 			return files;
@@ -96,7 +105,7 @@ namespace ITPI.MAP.DataExtractManager
 				{
 					string fileContents = File.ReadAllText(file.FullName);
 					sectionsExtract = JsonConvert.DeserializeObject<List<SectionsExtract>>(fileContents);
-					log.Info($"The file {file.Name} will be loaded.");
+					Log.Info($"The file {file.Name} will be loaded.");
 				}
 				else
 				{
@@ -107,7 +116,7 @@ namespace ITPI.MAP.DataExtractManager
 			}
 			catch (Exception exp)
 			{
-				log.Error(exp.InnerException.Message);
+				Log.Error($"The File {file.FullName} failed to deserialize, Exception: {exp.Message}. Process will continue.");
 				return null;
 			}
 		}
@@ -126,7 +135,7 @@ namespace ITPI.MAP.DataExtractManager
 			}
 			catch (Exception exp)
 			{
-				log.Error($"course number {sectionsExtract.CourseNumber} " +
+				Log.Error($"course number {sectionsExtract.CourseNumber} " +
 					$"course title {sectionsExtract.CourseTitle} " +
 					$"termid {sectionsExtract.TermID}. Exception {exp.Message}");
 				return false;
