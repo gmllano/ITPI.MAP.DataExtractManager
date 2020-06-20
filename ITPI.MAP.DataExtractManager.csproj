@@ -68,9 +68,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\ITPI.MAP.ExtractManagerUnitTest\OrchestrationManagerUnitTest.cs">
-      <Link>OrchestrationManagerUnitTest.cs</Link>
-    </Compile>
     <Compile Include="DataManager.cs" />
     <Compile Include="Interface\ILogger.cs" />
     <Compile Include="Logger.cs" />
