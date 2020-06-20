@@ -14,19 +14,19 @@ namespace ITPI.MAP.DataExtractManager
 		#region variables
 		
 		private readonly string sourcePath = string.Empty;
-		private readonly IDataExtractManager dataExtractManager;
+		private readonly IDataManager dataExtractManager;
 
 		#endregion
 
 		#region constructor
 
 		/// <summary>
-		/// The contructor for the Orchestration Manager.
+		/// The constructor for the orchestration manager.
 		/// </summary>
 		/// <param name="sourcePath">The source path of the files.</param>
 		/// <param name="dataExtractManager">The database extract manager.</param>
-		/// <param name="log">The log.</param>
-		public OrchestrationManager(string sourcePath, IDataExtractManager dataExtractManager, ILogger log)
+		/// <param name="log">The log entity.</param>
+		public OrchestrationManager(string sourcePath, IDataManager dataExtractManager, ILogger log)
 		{
 			this.sourcePath = sourcePath;
 			this.dataExtractManager = dataExtractManager;
@@ -84,7 +84,7 @@ namespace ITPI.MAP.DataExtractManager
 			}
 			catch (Exception exp)
 			{
-				Log.Error(exp.Message);	
+				Log.Error(exp.Message);
 			}
 
 			return files;
@@ -116,7 +116,7 @@ namespace ITPI.MAP.DataExtractManager
 			}
 			catch (Exception exp)
 			{
-				Log.Error($"The File {file.FullName} failed to deserialize, Exception: {exp.Message}. Process will continue.");
+				Log.Error($"The File {file?.FullName} failed to deserialize, Exception: {exp.Message}. Process will continue.");
 				return null;
 			}
 		}
@@ -131,13 +131,20 @@ namespace ITPI.MAP.DataExtractManager
 		{
 			try
 			{
-				return this.dataExtractManager.InsertSectionsExtract(sectionsExtract, ref courseCnt);
+				if (sectionsExtract != null)
+				{
+					return this.dataExtractManager.InsertSectionsExtract(sectionsExtract, ref courseCnt);
+				}
+				else
+				{
+					return false;
+				}
 			}
 			catch (Exception exp)
 			{
-				Log.Error($"course number {sectionsExtract.CourseNumber} " +
-					$"course title {sectionsExtract.CourseTitle} " +
-					$"termid {sectionsExtract.TermID}. Exception {exp.Message}");
+				Log.Error($"course number {sectionsExtract?.CourseNumber} " +
+					$"course title {sectionsExtract?.CourseTitle} " +
+					$"termid {sectionsExtract?.TermID}. Exception {exp.Message}");
 				return false;
 			}
 		}

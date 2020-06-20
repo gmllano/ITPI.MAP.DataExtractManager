@@ -7,7 +7,7 @@ namespace ITPI.MAP.DataExtractManager
 	/// <summary>
 	/// Interface responsible to retrieve, update, and insert data to database server.
 	/// </summary>
-	public interface IDataExtractManager
+	public interface IDataManager
 	{
 		/// <summary>
 		/// Get active semester data ordered by the semester field.

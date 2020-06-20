@@ -68,11 +68,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataExtractManager.cs" />
+    <Compile Include="..\ITPI.MAP.ExtractManagerUnitTest\OrchestrationManagerUnitTest.cs">
+      <Link>OrchestrationManagerUnitTest.cs</Link>
+    </Compile>
+    <Compile Include="DataManager.cs" />
     <Compile Include="Interface\ILogger.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="OrchestrationManager.cs" />
-    <Compile Include="Interface\IDataExtractManager.cs" />
+    <Compile Include="Interface\IDataManager.cs" />
     <Compile Include="Interface\IOrchestrationManager.cs" />
     <Compile Include="Models\JsonAssignment.cs" />
     <Compile Include="Models\JsonMeeting.cs" />

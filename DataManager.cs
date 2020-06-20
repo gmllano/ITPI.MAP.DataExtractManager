@@ -11,7 +11,7 @@ namespace ITPI.MAP.DataExtractManager
 	/// <summary>
 	/// Class responsible to communicate with the database server.
 	/// </summary>
-	public class DataExtractManager : IDataExtractManager
+	public class DataManager : IDataManager
 	{
 		#region variables
 
@@ -34,7 +34,7 @@ namespace ITPI.MAP.DataExtractManager
 		/// </summary>
 		/// <param name="connectionStr">The connection string.</param>
 		/// <param name="log">The log file.</param>
-		public DataExtractManager(string connectionStr, ILogger log)
+		public DataManager(string connectionStr, ILogger log)
 		{
 			this.connectionStr = connectionStr;
 			this.log = log;

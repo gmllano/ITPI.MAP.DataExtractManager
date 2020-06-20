@@ -29,7 +29,7 @@ namespace ITPI.MAP.DataExtractManager
 				}
 
 				builder.RegisterType<Logger>().As<ILogger>();
-				builder.RegisterType<DataExtractManager>().As<IDataExtractManager>()
+				builder.RegisterType<DataManager>().As<IDataManager>()
 				.WithParameter(new ResolvedParameter(
 							   (pi, ctx) => pi.ParameterType == typeof(string) && pi.Name == "connectionStr",
 							   (pi, ctx) => connectionStr));
@@ -77,18 +77,17 @@ namespace ITPI.MAP.DataExtractManager
 								if (result == false)
 								{
 									orchestration.Log.Warn($"course failed to insert. " +
-										$"term {extract.TermID}, course number {extract.CourseNumber}, " +
-										$"course title {extract.CourseTitle}");
+										$"term {extract?.TermID}, course number {extract?.CourseNumber}, " +
+										$"course title {extract?.CourseTitle}");
 								}
 							}
 
-							orchestration.Log.Info($"The file {file.Name} completed. Number of records loaded {courseCnt}");
+							orchestration.Log.Info($"The file {file?.Name} completed. Number of records loaded {courseCnt}");
 						}
 					}
 
 					orchestration.Log.Info("DONE - Extract and load has completed.");
 				}
-
 				catch (Exception exp)
 				{
 					orchestration.Log.Error($"Exception {exp.Message}");
