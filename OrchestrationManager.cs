@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace ITPI.MAP.DataExtractManager
 {
@@ -109,10 +110,15 @@ namespace ITPI.MAP.DataExtractManager
 				}
 				else
 				{
-					throw new ApplicationException("file is missing.");
+					throw new ArgumentNullException("The file is null or missing, failed to map file.");
 				}
 
 				return sectionsExtract;
+			}
+			catch (ArgumentException exp)
+			{
+				Log.Error(exp.Message);
+				return null;
 			}
 			catch (Exception exp)
 			{
@@ -137,8 +143,14 @@ namespace ITPI.MAP.DataExtractManager
 				}
 				else
 				{
-					return false;
+					throw new ArgumentNullException("The extract data is null or missing, unable to insert course.");
+					
 				}
+			}
+			catch (ArgumentNullException exp)
+			{
+				Log.Error(exp.Message);
+				return false;
 			}
 			catch (Exception exp)
 			{
