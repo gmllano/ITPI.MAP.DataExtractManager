@@ -66,20 +66,25 @@ namespace ITPI.MAP.DataExtractManager
 				// Get active semesters.
 				Log.Info("Get semesters from database.");
 				var semesters = this.dataExtractManager.GetSemesters();
+				Log.Info($"semesters retrieved, count {semesters.Count}");
 
 				// Get directory files.
 				Log.Info($"Get files from folder {this.sourcePath}");
-				var dirFiles = Directory.GetFiles(this.sourcePath);
+				var dirFiles = Directory.GetFiles(this.sourcePath, "DailyExtractEMS_*.json");
+				Log.Info($"Number of files retrieved from folder {dirFiles?.Count()}");
 
-				// Order the files in descending order by semester.
-				foreach (var smster in semesters)
+				if (semesters != null && dirFiles?.Count() > 0)
 				{
-					var file = dirFiles?.FirstOrDefault(a => a.Contains(smster.Semester));
-					
-					if (file != null)
+					// Order the files in descending order by semester.
+					foreach (var smster in semesters)
 					{
-						var fileInfo = new FileInfo(file);
-						files.Add(fileInfo);
+						var file = dirFiles?.FirstOrDefault(a => a.Contains(smster.Semester));
+
+						if (file != null)
+						{
+							var fileInfo = new FileInfo(file);
+							files.Add(fileInfo);
+						}
 					}
 				}
 			}
